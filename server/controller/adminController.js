@@ -7,6 +7,8 @@ import Notice from "../models/notice.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
+import sendEmail  from "../utils/email.js";
+
 export const adminLogin = async (req, res) => {
   const { username, password } = req.body;
   const errors = { usernameError: String, passwordError: String };
@@ -41,7 +43,6 @@ export const adminLogin = async (req, res) => {
   }
 };
 
-
 export const updatedPassword = async (req, res) => {
   try {
     const { newPassword, confirmPassword, email } = req.body;
@@ -73,6 +74,7 @@ export const updatedPassword = async (req, res) => {
     res.status(500).json(errors);
   }
 };
+
 export const updateAdmin = async (req, res) => {
   try {
     const { name, dob, department, contactNumber, avatar, email } = req.body;
@@ -283,6 +285,14 @@ export const addFaculty = async (req, res) => {
       passwordUpdated,
     });
     await newFaculty.save();
+
+    
+    // const message = `Dear ${name},\n\nWelcome to our ERP system! Your username is ${username} and your temporary password is ${newDob} (DOB in dd-mm-yyyy format). Please login to your account and update your password.\n\nBest regards,\nGraphic Era Hill University`;
+    // const subject = 'Your One Time Password'
+
+    // await sendEmail(email, subject, message);
+
+
     return res.status(200).json({
       success: true,
       message: "Faculty registerd successfully",
@@ -311,6 +321,7 @@ export const getFaculty = async (req, res) => {
     res.status(500).json(errors);
   }
 };
+
 export const getNotice = async (req, res) => {
   try {
     const errors = { noNoticeError: String };
@@ -421,6 +432,7 @@ export const deleteAdmin = async (req, res) => {
     res.status(500).json(errors);
   }
 };
+
 export const deleteFaculty = async (req, res) => {
   try {
     const faculties = req.body;
@@ -437,6 +449,7 @@ export const deleteFaculty = async (req, res) => {
     res.status(500).json(errors);
   }
 };
+
 export const deleteStudent = async (req, res) => {
   try {
     const students = req.body;
@@ -453,6 +466,7 @@ export const deleteStudent = async (req, res) => {
     res.status(500).json(errors);
   }
 };
+
 export const deleteSubject = async (req, res) => {
   try {
     const subjects = req.body;
@@ -502,14 +516,14 @@ export const addStudent = async (req, res) => {
       motherContactNumber,
       year,
     } = req.body;
-    const errors = { emailError: String };
+
     const existingStudent = await Student.findOne({ email });
     if (existingStudent) {
-      errors.emailError = "Email already exists";
-      return res.status(400).json(errors);
+      return res.status(400).json({ emailError: "Email already exists" });
     }
+
     const existingDepartment = await Department.findOne({ department });
-    let departmentHelper = existingDepartment.departmentCode;
+    const departmentHelper = existingDepartment.departmentCode;
 
     const students = await Student.find({ department });
     let helper;
@@ -520,15 +534,12 @@ export const addStudent = async (req, res) => {
     } else {
       helper = students.length.toString();
     }
-    var date = new Date();
-    var components = ["STU", date.getFullYear(), departmentHelper, helper];
-
-    var username = components.join("");
-    let hashedPassword;
+    const date = new Date();
+    const components = ["STU", date.getFullYear(), departmentHelper, helper];
+    const username = components.join("");
     const newDob = dob.split("-").reverse().join("-");
-
-    hashedPassword = await bcrypt.hash(newDob, 10);
-    var passwordUpdated = false;
+    const hashedPassword = await bcrypt.hash(newDob, 10);
+    const passwordUpdated = false;
 
     const newStudent = await new Student({
       name,
@@ -549,25 +560,34 @@ export const addStudent = async (req, res) => {
       year,
       passwordUpdated,
     });
+
     await newStudent.save();
+
     const subjects = await Subject.find({ department, year });
     if (subjects.length !== 0) {
-      for (var i = 0; i < subjects.length; i++) {
+      for (let i = 0; i < subjects.length; i++) {
         newStudent.subjects.push(subjects[i]._id);
       }
     }
     await newStudent.save();
+    
+    // const option = {
+    //   email: email,
+    //   message: `Dear ${name},\n\nWelcome to our ERP system! Your username is ${username} and your temporary password is ${newDob} (DOB in dd-mm-yyyy format). Please login to your account and update your password.\n\nBest regards,\nGraphic Era Hill University`,
+    // }
+    // await sendEmail(option);
+
     return res.status(200).json({
       success: true,
-      message: "Student registerd successfully",
+      message: "Student registered successfully",
       response: newStudent,
     });
   } catch (error) {
-    const errors = { backendError: String };
-    errors.backendError = error;
-    res.status(500).json(errors);
+    console.error('Error adding student:', error);
+    return res.status(500).json({ backendError: error.message || 'Internal server error' });
   }
 };
+
 
 export const getStudent = async (req, res) => {
   try {
@@ -613,6 +633,7 @@ export const getAllAdmin = async (req, res) => {
     console.log("Backend Error", error);
   }
 };
+
 export const getAllDepartment = async (req, res) => {
   try {
     const departments = await Department.find();
