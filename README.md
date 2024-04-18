@@ -58,16 +58,16 @@ Feel free to explore and contribute to making our College ERP System even better
 
 Admin
 
-preview/Admin.mp4
+[preview/Admin.mp4](https://youtu.be/7GHsn7iI5FU)
 
 <br>
 
 Faculty
 
-preview\Faculty.mp4
+[preview\Faculty.mp4](https://youtu.be/YRZsCbcj-6w)
 
 <br>
 
 Student
 
-preview\Student.mp4
+[preview\Student.mp4](https://youtu.be/bE4bfzZuV4o)
