@@ -266,7 +266,7 @@ export const addFaculty = async (req, res) => {
     var username = components.join("");
     let hashedPassword;
     const newDob = dob.split("-").reverse().join("-");
-
+    console.log(newDob)
     hashedPassword = await bcrypt.hash(newDob, 10);
     var passwordUpdated = false;
 

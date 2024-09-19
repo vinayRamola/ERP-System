@@ -53,21 +53,3 @@ Welcome to our College ERP System, built using the MERN Stack!
 2. **Expansion to Non-Academic Sections**: Incorporate features beyond academics.
 3. **Enhanced Admin Functionality**: Provide more flexibility to admins in managing users and subjects.
 
-Feel free to explore and contribute to making our College ERP System even better!
-# Preview
-
-Admin
-
-[preview/Admin.mp4](https://youtu.be/7GHsn7iI5FU)
-
-<br>
-
-Faculty
-
-[preview\Faculty.mp4](https://youtu.be/YRZsCbcj-6w)
-
-<br>
-
-Student
-
-[preview\Student.mp4](https://youtu.be/bE4bfzZuV4o)
